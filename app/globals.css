@@ -14,6 +14,12 @@
   --color-grade-b: #a15c00;
   --color-grade-c: #b42318;
 
+  /* 보물 지도(/regions) — 양피지 위 글자는 ink · sepia(7.9 : 1) · grade-c(5.3 : 1)만. gold는 그림에만. */
+  --color-parchment: #f3e6c4;
+  --color-parchment-deep: #e6d3a3;
+  --color-sepia: #5c3d1e;
+  --color-gold: #b8860b;
+
   --font-sans: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
