@@ -1,6 +1,6 @@
-import raw from "@/data/buyers.json";
+import { db } from "@/lib/db";
 
-// 바이어 데이터 읽기. 지금은 JSON을 돌려줄 뿐이지만 async로 둔다 — 5일차에 DB로 바꿀 때 두 함수의 속만 바뀐다.
+// 바이어 데이터 읽기 — Supabase DB의 Buyer 표에서 읽는다(서버 전용).
 export type Grade = "S" | "A" | "B" | "C";
 
 export type Buyer = {
@@ -22,15 +22,12 @@ export type Buyer = {
   signals: string[];
 };
 
-// JSON에서 추론한 형은 grade가 string이라 한 번만 맞춘다.
-const buyers = raw as Buyer[];
-
+// Prisma가 돌려주는 형은 grade가 string이라 한 번만 맞춘다.
 export async function getBuyers(): Promise<Buyer[]> {
-  return buyers;
+  return (await db().buyer.findMany({ orderBy: { id: "asc" } })) as Buyer[];
 }
 
 /** id는 대문자로 맞춰 찾는다(b048 → B048). 없으면 null. */
 export async function getBuyer(id: string): Promise<Buyer | null> {
-  const key = id.toUpperCase();
-  return buyers.find((b) => b.id === key) ?? null;
+  return (await db().buyer.findUnique({ where: { id: id.toUpperCase() } })) as Buyer | null;
 }

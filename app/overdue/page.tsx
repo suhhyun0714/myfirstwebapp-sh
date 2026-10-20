@@ -7,7 +7,9 @@ import { getBuyers } from "@/lib/buyers";
 import { fx, int, pct } from "@/lib/format";
 import { getUsdKrw } from "@/lib/fx";
 import { overdueReport, RECOVERY_RULE } from "@/lib/overdue";
+import { getLatestReviewByBuyer } from "@/lib/reviews";
 
+export const dynamic = "force-dynamic";
 export const metadata = { title: "연체 보고" };
 
 const SHOW_FIRST = 7; // 연체 바이어 목록은 7곳까지 먼저 보이고 나머지는 접어 둔다
@@ -22,7 +24,7 @@ function Chevron({ className }: { className: string }) {
 }
 
 export default async function Page() {
-  const [buyers, fxRate] = await Promise.all([getBuyers(), getUsdKrw()]);
+  const [buyers, fxRate, latest] = await Promise.all([getBuyers(), getUsdKrw(), getLatestReviewByBuyer()]);
   const rate = fxRate.rate;
   const r = overdueReport(buyers);
   const { k } = r;
@@ -133,7 +135,7 @@ export default async function Page() {
                   <ol className="space-y-2">
                     {c.buyers.map((b) => (
                       <li key={b.id}>
-                        <OverdueBuyerItem buyer={b} rate={rate} />
+                        <OverdueBuyerItem buyer={b} rate={rate} latest={latest.get(b.id)} />
                       </li>
                     ))}
                   </ol>
@@ -197,7 +199,7 @@ export default async function Page() {
         <ol className="space-y-2">
           {firstBuyers.map((b, i) => (
             <li key={b.id}>
-              <OverdueBuyerItem buyer={b} rank={i + 1} rate={rate} />
+              <OverdueBuyerItem buyer={b} rank={i + 1} rate={rate} latest={latest.get(b.id)} />
             </li>
           ))}
         </ol>
@@ -210,14 +212,14 @@ export default async function Page() {
             <ol className="mt-2 space-y-2">
               {moreBuyers.map((b, i) => (
                 <li key={b.id}>
-                  <OverdueBuyerItem buyer={b} rank={SHOW_FIRST + i + 1} rate={rate} />
+                  <OverdueBuyerItem buyer={b} rank={SHOW_FIRST + i + 1} rate={rate} latest={latest.get(b.id)} />
                 </li>
               ))}
             </ol>
           </details>
         ) : null}
         <p className="text-sm text-muted">
-          신호는 확인해 볼 이유이지, 연체의 원인이라는 뜻은 아닙니다. 진행 상황은 담당자가 기록을 남기면 이 칸에 나옵니다.
+          신호는 확인해 볼 이유이지, 연체의 원인이라는 뜻은 아닙니다. 진행 상황은 바이어 상세 쪽에 남긴 가장 최근 확인 기록입니다.
         </p>
       </section>
     </div>

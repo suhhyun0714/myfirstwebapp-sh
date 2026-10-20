@@ -9,6 +9,8 @@ import { getBuyers } from "@/lib/buyers";
 import { int, pct, usd } from "@/lib/format";
 import { byOverdue, chestCount, MAX_CHESTS, maxOverdue, regionFromSlug, treasureMap } from "@/lib/treasure";
 
+export const dynamic = "force-dynamic";
+
 type Props = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

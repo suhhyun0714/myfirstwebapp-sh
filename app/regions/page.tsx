@@ -6,6 +6,7 @@ import { getBuyers } from "@/lib/buyers";
 import { int, pct, usd } from "@/lib/format";
 import { MAX_CHESTS, treasureMap } from "@/lib/treasure";
 
+export const dynamic = "force-dynamic";
 export const metadata = { title: "보물 지도" };
 
 export default async function Page() {
