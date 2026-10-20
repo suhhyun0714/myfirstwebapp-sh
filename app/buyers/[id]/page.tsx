@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import GradeBadge from "@/components/GradeBadge";
 import PageHeader from "@/components/PageHeader";
+import ReplyForm from "@/components/ReplyForm";
 import ReviewForm, { ReviewStatusBadge } from "@/components/ReviewForm";
 import { getBuyer } from "@/lib/buyers";
 import { kst, pct, usd } from "@/lib/format";
@@ -88,6 +89,10 @@ export default async function Page({ params }: Props) {
                 <p className="text-sm text-muted">
                   {r.reviewer} · <span className="num">{kst(r.createdAt)}</span>
                 </p>
+                <ReplyForm
+                  reviewId={r.id}
+                  replies={r.replies.map((x) => ({ id: x.id, memo: x.memo, reviewer: x.reviewer, when: kst(x.createdAt) }))}
+                />
               </li>
             ))}
           </ul>

@@ -1,7 +1,7 @@
-import type { ReactNode } from "react";
 import Link from "next/link";
 import GradeBadge from "@/components/GradeBadge";
 import Money, { KrwNote } from "@/components/Money";
+import ReplyForm from "@/components/ReplyForm";
 import { ReviewStatusBadge } from "@/components/ReviewForm";
 import type { Buyer } from "@/lib/buyers";
 import { int, kst, pct, usd } from "@/lib/format";
@@ -10,7 +10,7 @@ import type { LatestReview } from "@/lib/reviews";
 
 // 연체 바이어 한 줄(<details>).
 // 접힌 줄 = 표 한 줄: 회사 · 등급 · 연체 금액 · 밀린 날 · 회수 가능성(넓은 화면은 OverdueListHeader와 칸이 맞는다).
-// 펼치면: 박스 4칸(연체 금액과 기간 · 과거 이력 · 회수 가능성 · 진행 상황 = 가장 최근 확인 기록) → 거래 건수와 품목 → 신호 → 자료 단추.
+// 펼치면: 박스 3칸(연체 금액과 기간 · 과거 이력과 회수 가능성 · 진행 상황 = 가장 최근 확인 기록과 댓글) → 거래 건수와 품목 → 신호 → 자료 단추.
 // 데이터에 없는 것(거래 건수 · 품목)은 지어내지 않고 '확인 필요'로 둔다.
 
 const companyLink = (name: string) => `https://opencorporates.com/companies?q=${encodeURIComponent(name)}`;
@@ -43,16 +43,6 @@ export function OverdueListHeader() {
       <span className="col-span-2 text-right">연체 금액</span>
       <span className="col-span-2 text-right">밀린 날</span>
       <span className="col-span-2 pr-7 text-right">회수 가능성</span>
-    </div>
-  );
-}
-
-function Tile({ label, value, sub }: { label: string; value: ReactNode; sub: ReactNode }) {
-  return (
-    <div className="rounded-md border border-sepia bg-bg p-3">
-      <p className="text-xs font-semibold text-sepia">{label}</p>
-      <div className="mt-1 text-base font-bold text-ink sm:text-lg">{value}</div>
-      <p className="mt-0.5 text-xs text-muted">{sub}</p>
     </div>
   );
 }
@@ -110,7 +100,7 @@ export default function OverdueBuyerItem({
       </summary>
 
       <div className="space-y-4 border-t border-sepia p-3">
-        <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
+        <div className="grid grid-cols-2 gap-2 md:grid-cols-3">
           <div className="rounded-md border border-sepia bg-bg p-3">
             <p className="text-xs font-semibold text-sepia">연체 금액</p>
             <div className="mt-1 text-base font-bold text-ink sm:text-lg">
@@ -123,21 +113,23 @@ export default function OverdueBuyerItem({
               <span className="num">{b.termsDays}일</span> 조건
             </p>
           </div>
-          <Tile
-            label="과거 연체 이력"
-            value={b.avgDaysLate12m === null ? "기록 없음" : <span className="num">평균 {b.avgDaysLate12m.toFixed(1)}일 지연</span>}
-            sub="최근 1년 지급 기준"
-          />
-          <Tile
-            label="회수 가능성"
-            value={<RecoveryBadge level={level} />}
-            sub={
-              <>
-                <span className="num">{int(b.oldestOpenDays)}일째</span> · 위험 점수 <span className="num">{pct(b.pd30d)}</span>
-              </>
-            }
-          />
           <div className="rounded-md border border-sepia bg-bg p-3">
+            <p className="text-xs font-semibold text-sepia">과거 연체 이력</p>
+            <div className="mt-1 text-base font-bold text-ink sm:text-lg">
+              {b.avgDaysLate12m === null ? "기록 없음" : <span className="num">평균 {b.avgDaysLate12m.toFixed(1)}일 지연</span>}
+            </div>
+            <p className="mt-0.5 text-xs text-muted">최근 1년 지급 기준</p>
+            <div className="mt-3 border-t border-sepia pt-3">
+              <p className="text-xs font-semibold text-sepia">회수 가능성</p>
+              <div className="mt-1">
+                <RecoveryBadge level={level} />
+              </div>
+              <p className="mt-0.5 text-xs text-muted">
+                <span className="num">{int(b.oldestOpenDays)}일째</span> · 위험 점수 <span className="num">{pct(b.pd30d)}</span>
+              </p>
+            </div>
+          </div>
+          <div className="col-span-2 rounded-md border border-sepia bg-bg p-3 md:col-span-1">
             <p className="text-xs font-semibold text-sepia">진행 상황</p>
             {latest ? (
               <div className="mt-1 space-y-1">
@@ -146,6 +138,10 @@ export default function OverdueBuyerItem({
                 <p className="text-xs text-muted">
                   {latest.reviewer} · <span className="num">{kst(latest.createdAt)}</span>
                 </p>
+                <ReplyForm
+                  reviewId={latest.id}
+                  replies={latest.replies.map((r) => ({ id: r.id, memo: r.memo, reviewer: r.reviewer, when: kst(r.createdAt) }))}
+                />
               </div>
             ) : (
               <>
@@ -187,9 +183,6 @@ export default function OverdueBuyerItem({
             <a href={companyLink(b.name)} target="_blank" rel="noopener noreferrer" className={button}>
               기업 등록 · 재무 정보(새 탭)
             </a>
-            <Link href={`/buyers/${b.id}`} className={button}>
-              {b.id} 상세 쪽
-            </Link>
           </div>
           <p className="mt-1 text-xs text-muted">(가상) 바이어 — 바깥 검색 결과는 이 바이어와 다를 수 있습니다.</p>
         </div>

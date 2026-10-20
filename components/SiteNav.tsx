@@ -9,7 +9,7 @@ export const NAV_ITEMS: { href: string; label: string }[] = [
 
 export default function SiteNav() {
   return (
-    <header className="border-b-2 border-sepia bg-parchment">
+    <header className="sticky top-0 z-20 border-b-2 border-sepia bg-parchment">
       <nav aria-label="주 메뉴" className="mx-auto w-full max-w-5xl px-4 py-2 sm:px-6">
         <ul className="flex flex-wrap items-center gap-2">
           {NAV_ITEMS.map((item) => (

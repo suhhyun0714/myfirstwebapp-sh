@@ -46,10 +46,10 @@ export default async function Page() {
         />
         <ul className="-mt-3 grid gap-2 text-sm text-ink sm:grid-cols-2">
           <li className="rounded-md border border-sepia bg-parchment px-3 py-2">
-            연체는 전체 채권의 <b className="num">{pct(r.shareOfAr)}</b>
+            <b>연체</b>는 전체 채권의 <b className="num">{pct(r.shareOfAr)}</b>
           </li>
           <li className="rounded-md border border-sepia bg-parchment px-3 py-2">
-            연체의 <b className="num">{pct(r.gradeC.share)}</b>가 C등급 <b className="num">{int(r.gradeC.count)}곳</b>에 몰림
+            <b>연체</b>의 <b className="num">{pct(r.gradeC.share)}</b>가 C등급 <b className="num">{int(r.gradeC.count)}곳</b>에 몰림
           </li>
           {topRegion ? (
             <li className="rounded-md border border-sepia bg-parchment px-3 py-2">

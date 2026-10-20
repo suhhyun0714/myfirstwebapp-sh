@@ -31,3 +31,32 @@ export async function addReview(_prev: ReviewState, formData: FormData): Promise
   revalidatePath("/");
   return { ok: true, message: "저장했습니다 — 새로 고쳐도 남아 있습니다" };
 }
+
+// 확인 기록에 댓글(팔로업) 달기. 검사 규칙은 확인 기록과 같다.
+export async function addReply(_prev: ReviewState, formData: FormData): Promise<ReviewState> {
+  const reviewId = Number(String(formData.get("reviewId") ?? "").trim());
+  const memo = String(formData.get("memo") ?? "").trim();
+  const reviewer = String(formData.get("reviewer") ?? "").trim();
+
+  if (!memo) return { ok: false, message: "댓글을 적어 주세요" };
+  if (memo.length > 200) return { ok: false, message: "댓글은 200자 이내로 적어 주세요" };
+  if (!reviewer) return { ok: false, message: "확인한 사람(별명)을 적어 주세요" };
+  if (reviewer.length > 20) return { ok: false, message: "별명은 20자 이내로 적어 주세요" };
+
+  let buyerId: string;
+  try {
+    const review = Number.isInteger(reviewId)
+      ? await db().review.findUnique({ where: { id: reviewId }, select: { buyerId: true } })
+      : null;
+    if (!review) return { ok: false, message: "확인 기록을 찾을 수 없습니다" };
+    buyerId = review.buyerId;
+    await db().reviewReply.create({ data: { reviewId, memo, reviewer } });
+  } catch {
+    return { ok: false, message: "저장하지 못했습니다 — 잠시 뒤 다시 눌러 주세요" };
+  }
+
+  revalidatePath(`/buyers/${buyerId}`);
+  revalidatePath("/overdue");
+  revalidatePath("/");
+  return { ok: true, message: "댓글을 남겼습니다" };
+}

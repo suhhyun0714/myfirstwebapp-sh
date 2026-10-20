@@ -1,4 +1,3 @@
-import Link from "next/link";
 import PageHeader from "@/components/PageHeader";
 import { Chest, HanbitFlag, PirateShip, Skull } from "@/components/TreasureIcons";
 import TreasureWorldMap from "@/components/TreasureWorldMap";
@@ -65,14 +64,9 @@ export default async function Page() {
           {islands.map((r) =>
             r.slug ? (
               <li key={r.region}>
-                <Link
-                  href={`/regions/${r.slug}`}
-                  className="flex min-h-11 flex-wrap items-center justify-between gap-x-3 gap-y-1 rounded-lg border border-sepia bg-parchment px-3 py-2 hover:bg-parchment-deep"
-                >
+                <div className="flex min-h-11 flex-wrap items-center justify-between gap-x-3 gap-y-1 rounded-lg border border-sepia bg-parchment px-3 py-2">
                   <span className="flex flex-wrap items-center gap-x-2">
-                    <span className="font-semibold text-ink underline decoration-sepia underline-offset-4">
-                      {r.region}
-                    </span>
+                    <span className="font-semibold text-ink">{r.region}</span>
                     {r.pirate ? (
                       <span className="inline-flex items-center gap-1 text-sm font-semibold text-grade-c">
                         <Skull className="h-5 w-5" />
@@ -94,7 +88,7 @@ export default async function Page() {
                       <span className="num">{usd(r.ar)}</span>
                     </span>
                   </span>
-                </Link>
+                </div>
               </li>
             ) : null,
           )}

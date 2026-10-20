@@ -39,6 +39,19 @@ model Review {
   memo      String
   reviewer  String
   createdAt DateTime @default(now())
+  replies   ReviewReply[]
 
   @@index([buyerId])
+}
+
+// 확인 기록에 단 댓글(팔로업) — 기록 하나에 댓글 여럿(1:N)
+model ReviewReply {
+  id        Int      @id @default(autoincrement())
+  reviewId  Int
+  review    Review   @relation(fields: [reviewId], references: [id])
+  memo      String
+  reviewer  String
+  createdAt DateTime @default(now())
+
+  @@index([reviewId])
 }
