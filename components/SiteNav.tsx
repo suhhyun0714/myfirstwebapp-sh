@@ -5,6 +5,8 @@ import Link from "next/link";
 export const NAV_ITEMS: { href: string; label: string }[] = [
   { href: "/regions", label: "숨어 있는 돈을 찾아서" },
   { href: "/overdue", label: "연체 바이어" },
+  { href: "/dunning", label: "독촉 승인" },
+  { href: "/audit", label: "감사 기록" },
 ];
 
 export default function SiteNav() {

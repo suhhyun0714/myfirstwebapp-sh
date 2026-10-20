@@ -77,6 +77,18 @@ export function runGuardrails(input: { subject: string; body: string; buyerName:
   return GUARDRAILS.map(({ id, label }) => ({ id, label, ok: notes[id] === "", note: notes[id] }));
 }
 
+/** DB의 checks(Json) → 검사 7칸. 모양이 어긋난 칸은 '걸림 · 확인 필요'로 본다(통과로 꾸미지 않는다). */
+export function readChecks(json: unknown): Check[] {
+  const list = Array.isArray(json) ? json : [];
+  return GUARDRAILS.map(({ id, label }) => {
+    const c = list.find((x) => x && typeof x === "object" && (x as { id?: unknown }).id === id) as
+      | { ok?: unknown; note?: unknown }
+      | undefined;
+    if (!c || typeof c.ok !== "boolean") return { id, label, ok: false, note: "확인 필요" };
+    return { id, label, ok: c.ok, note: typeof c.note === "string" ? c.note : "" };
+  });
+}
+
 /** 걸린 검사 번호들: ["G1", "G5"] */
 export function failedIds(checks: Check[]): GuardrailId[] {
   return checks.filter((c) => !c.ok).map((c) => c.id);
