@@ -31,7 +31,7 @@ export function chestCount(value: number, max: number): number {
 }
 
 /**
- * 섬(지역) 6곳 — 채권 합이 큰 순.
+ * 섬(지역) 6곳 — 연체 합이 큰 순(같으면 채권 합이 큰 순).
  * chests: 채권 합 ÷ 가장 큰 지역 합 × 5
  * pirate(해골 + 해적선): 지역 C등급 비중 > 전체 C등급 비중
  * flag(한빛 깃발): 해적 바다가 아니고, 지역 연체 비중(연체 ÷ 채권) < 전체 연체 비중
@@ -60,6 +60,7 @@ export function treasureMap(buyers: Buyer[]) {
       flag,
     };
   });
+  islands.sort((a, b) => b.overdue - a.overdue || b.ar - a.ar);
 
   return { islands, shareCAll: k.shareC, overdueShareAll };
 }

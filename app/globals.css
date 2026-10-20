@@ -34,6 +34,11 @@ body {
   overflow-wrap: anywhere;
 }
 
+/* 펼치기 줄(<details>)의 기본 삼각표 숨김 — 대신 화살표 그림을 쓴다(Safari용) */
+.report-summary::-webkit-details-marker {
+  display: none;
+}
+
 /* 숫자 · 금액 · %: 자리 맞춤 + 한 줄 */
 .num {
   font-variant-numeric: tabular-nums;

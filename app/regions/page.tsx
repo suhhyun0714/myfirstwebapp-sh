@@ -59,6 +59,7 @@ export default async function Page() {
         <h2 id="regions" className="text-lg font-bold text-ink">
           지역 6곳
         </h2>
+        <p className="text-sm text-muted">묻힌 보물(연체)이 많은 순</p>
         <ul className="grid gap-2 sm:grid-cols-2">
           {islands.map((r) =>
             r.slug ? (

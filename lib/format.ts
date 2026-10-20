@@ -23,6 +23,23 @@ export function krw(v: Num): string {
   return `${whole.format(Math.round(v))}원`;
 }
 
+/** 원화 어림(백만원 단위로 반올림): 773063580 → "약 7억 7,300만원" · 79297808 → "약 7,900만원" */
+export function krwApprox(v: Num): string {
+  if (!ok(v)) return EMPTY;
+  const m = Math.round(v / 1_000_000); // 백만원 단위
+  if (m === 0) return "약 100만원 미만";
+  const eok = Math.floor(m / 100);
+  const man = (m % 100) * 100; // 만원
+  if (eok === 0) return `약 ${whole.format(man)}만원`;
+  return man === 0 ? `약 ${whole.format(eok)}억원` : `약 ${whole.format(eok)}억 ${whole.format(man)}만원`;
+}
+
+/** 환율: 1332.31 → "1,332.31" (소수 둘째 자리) */
+export function fx(v: Num): string {
+  if (!ok(v)) return EMPTY;
+  return new Intl.NumberFormat("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(v);
+}
+
 /** 비율 → 백분율: 0.5 → "50.0%" (digits = 소수 자리, 기본 1) */
 export function pct(ratio: Num, digits = 1): string {
   if (!ok(ratio)) return EMPTY;

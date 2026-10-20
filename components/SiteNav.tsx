@@ -4,7 +4,7 @@ import Link from "next/link";
 // 홈(/)은 메뉴에서 뺐지만 주소로는 그대로 열린다(배포 배지 확인용).
 export const NAV_ITEMS: { href: string; label: string }[] = [
   { href: "/regions", label: "숨어 있는 돈을 찾아서" },
-  { href: "/buyers", label: "연체 바이어" },
+  { href: "/overdue", label: "연체 바이어" },
 ];
 
 export default function SiteNav() {
